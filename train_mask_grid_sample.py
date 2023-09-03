@@ -305,6 +305,7 @@ class NeRFSystem(LightningModule):
         for k, v in loss_d.items():
             self.log(f'train/{k}', v)
         self.log('train/psnr', psnr_)
+        self.log('val/psnr', psnr_)
 
         if (self.global_step + 1) % 500 == 0:
             img = results[f'rgb_{typ}'].detach().view(H, W, 3).permute(2, 0, 1).cpu() # (3, H, W)
@@ -608,6 +609,7 @@ def main_train_mask_grid_sample(hparams):
 
 
     trainer = Trainer(max_epochs=hparams.num_epochs,
+                      max_steps=12500,
                       checkpoint_callback=checkpoint_callback,
                       #resume_from_checkpoint=hparams.ckpt_path,
                       logger=logger,
@@ -615,9 +617,10 @@ def main_train_mask_grid_sample(hparams):
                       progress_bar_refresh_rate=hparams.refresh_every,
                       gpus= hparams.num_gpus,
                       accelerator='ddp' if hparams.num_gpus>1 else None,
-                      num_sanity_val_steps=-1,
+                      num_sanity_val_steps=-0,
                       benchmark=True,
-                      profiler="simple" if hparams.num_gpus==1 else None)
+                      profiler="simple" if hparams.num_gpus==1 else None,
+                      limit_val_batches=0)
 
     trainer.fit(system)
 

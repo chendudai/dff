@@ -24,10 +24,10 @@ import pandas
 
 def get_k_files(k, csv_path):
     xls_file = pandas.read_csv(csv_path)
-    col = xls_file["a picture of a cathedral's facade"]
+    col = xls_file["score"]
     col_sorted = col.sort_values(ascending=False)
     files = col_sorted[:k]
-    names = xls_file['filename'][files.index]
+    names = xls_file['fn'][files.index]
     return names.values.tolist()
 
 class PhototourismDataset(Dataset):
@@ -80,6 +80,7 @@ class PhototourismDataset(Dataset):
         self.scene_name = os.path.basename(tsv)[:-4]
         self.files = pd.read_csv(tsv, sep='\t')
         self.files = self.files[~self.files['id'].isnull()] # remove data without id
+        self.files['split'] = self.files['split'].replace('test', 'train')
         self.files.reset_index(inplace=True, drop=True)
         ####
         #self.files = self.files[:5] 
@@ -271,9 +272,9 @@ class PhototourismDataset(Dataset):
                     q = 0
                     for id_ in self.img_ids_train:
                         
-                        print(q)
                         q = q + 1
-                        
+                        print(id_)
+
                         ###dff
                         if (self.num_of_img is not None) and (id_ not in idx_to_use):
                             continue 
@@ -343,6 +344,7 @@ class PhototourismDataset(Dataset):
                     print("it fails to upload data")
                     
                 self.all_rays = torch.cat(self.all_rays, 0) # ((N_images-1)*h*w, 8)
+
                 self.all_rgbs = torch.cat(self.all_rgbs, 0) # ((N_images-1)*h*w, 3)
                 self.all_imgs_wh = torch.cat(self.all_imgs_wh, 0) # ((N_images-1)*h*w, 3)
                 ###dff
@@ -464,8 +466,8 @@ class PhototourismDataset(Dataset):
                     feature_folder = self.features_path
 
                 feature_path = os.path.join(feature_folder, os.path.splitext(self.image_paths[id_].split(".")[0])[0] + '_fmap_CxHxW.pt')
-            
-            
+                # print(feature_path)
+                # print(os.path.isfile(feature_path))
                 if not os.path.isfile(feature_path):
                     return
             ###dff
@@ -475,7 +477,7 @@ class PhototourismDataset(Dataset):
             img = Image.open(os.path.join(self.root_dir, 'dense/images',
                                           self.image_paths[id_])).convert('RGB')
             img_w, img_h = img.size
-            if self.img_downscale > 1:
+            if self.img_downscale >= 1:
                 img_w = img_w//self.img_downscale
                 img_h = img_h//self.img_downscale
                 img_s = img.resize((img_w, img_h), Image.LANCZOS)
