@@ -24,7 +24,7 @@ class MetricCalculator:
         width, height = gt_img.size
         #print("gt_size_"+str(width)+"_"+str(height))
         #print("pred_img_"+str(pred_img.size[0])+"_"+str(pred_img.size[1]))
-        gt_img = gt_img.resize((int(width/4),int(height/4)))
+        # gt_img = gt_img.resize((int(width/4),int(height/4)))
         #print("gt_size_resized_"+str(gt_img.size[0])+"_"+str(gt_img.size[1]))
         gt_img.save("gt.jpg")
         pred_img.show()
@@ -114,23 +114,32 @@ if __name__ == "__main__":
     scores = []
     scores_gt = []
     mask_gt = []
-    
+    c = 'windows'
+
     #gt_path = "/storage/chendudai/data/manually_gt_masks_badshahi/portals"
     #eval_path = "/storage/hanibezalel/Ha-NeRF/eval_hurba/results/phototourism/figure_out_dome_clean"
     #gt_path = "/storage/chendudai/data/manually_gt_masks_hurba/windows"
     #eval_path = "/storage/hanibezalel/Ha-NeRF/eval_st_paul_200/results/phototourism/figure_out_window_clean"
-    #gt_path = "/storage/chendudai/data/manually_gt_masks_0_1/windows"
+    gt_path = "/storage/chendudai/data/manually_gt_masks_hurba/" + c
     #gt_path = "/storage/chendudai/data/manually_gt_masks_st_paul/towers"
     #gt_path = "/storage/chendudai/data/manually_gt_masks_notre_dame/portals"
-    gt_path = "/storage/chendudai/data/manually_gt_masks_0209/windows"
-    #eval_path = "/storage/hanibezalel/Ha-NeRF/eval_milano_200/results/phototourism/figure_out_portal_clean"
+    # gt_path = '/storage/chendudai/data/gt_warps_with_manually_100/milano/windows/'
+    # eval_path = "/storage/hanibezalel/Ha-NeRF/eval_milano_200/results/phototourism/figure_out_portal_clean"
     #eval_path = "/storage/hanibezalel/Ha-NeRF/eval_blue_m_200/results/phototourism/figure_out_windows"
     #gt_path = "/storage/hanibezalel/Ha-NeRF/eval/results/phototourism/dff_sample_0"
     #eval_path = "/storage/hanibezalel/Ha-NeRF/eval/results/phototourism/dff_sample_0"
-    eval_path = "/storage/hanibezalel/wikiscenes/logs/masks/blue_window/crf"
-    
+    # eval_path = "/storage/hanibezalel/wikiscenes/logs/masks/milano_window/crf"
+    eval_path = "/storage/hanibezalel/Ha-NeRF/eval/results/phototourism/hurba_150/" + c
+
+    ts_list = []
+    if os.path.exists(gt_path):
+        list_dir = os.listdir(gt_path)
+        ts_list = [int(f[:4]) for f in list_dir if f.endswith('jpg')]
+    print(ts_list)
+
+
     #milan
-    #ts_list = [17, 23, 29, 89, 117, 131, 633] # window,s
+    # ts_list = [17, 23, 29, 89, 117, 131, 633] # window,s
     #ts_list = [120, 146, 350, 561, 751, 761, 796] # portal,s
     #ts_list = [156, 259, 415, 455, 473] # spires
     #ts_list = [25, 634, 637, 645, 764] # facade
@@ -148,7 +157,7 @@ if __name__ == "__main__":
     #ts_list = [354,384,188,153,24,4]#domes
     #ts_list = [15,145,154,157,193]#minaretes
     #ts_list = [8,24,153,354,384]#portals
-    ts_list = [4,24,153,354,384]#windows
+    # ts_list = [4,24,153,354,384]#windows
     #badashahi
     #ts_list = [9,11,347,356,459]#domes
     #ts_list = [11,29,38,178,421]#minarets
@@ -159,7 +168,13 @@ if __name__ == "__main__":
     #ts_list = [26,44,45,52,101]#portals
     #ts_list = [28,37,45,52,55]#windows
 
-    categories = ['facade','portal','spires','window']
+    # ts_list = []
+    # if os.path.exists(gt_path):
+    #     list_dir = os.listdir(gt_path)
+    #     ts_list = [int(f[:4]) for f in list_dir if f.endswith('jpg')]
+    # print(ts_list)
+
+    categories = ['windows']
     gt_idx = []
     gt_files = []
     pred_idx = []
@@ -199,7 +214,15 @@ if __name__ == "__main__":
                     
 
     
-    labels = ['portal'] * len(mask_gt)
+    labels = [c] * len(mask_gt)
     #labels = ['apple'] * len(mask_gt)
     calculator = MetricCalculator(eval_path)
+
+    # print(len(scores))
+    # print(len(mask_gt))
+    # print(len(labels))
+    # print(scores.shape)
+    # print(mask_gt.shape)
+    # print(labels.shape)
+
     calculator.process_all_images(scores,mask_gt,labels)

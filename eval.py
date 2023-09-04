@@ -454,29 +454,29 @@ if __name__ == "__main__":
         kwargs['output_transient'] = False
     ###dff
     #milan
-    #ts_list = [17, 23, 29, 89, 117, 131, 633] # window,s
-    #ts_list = [120, 146, 350, 561, 751, 761, 796] # portal,s
-    #ts_list = [156, 259, 415, 455, 473] # spires
+    # ts_list = [17, 23, 29, 89, 117, 131, 633] # window,s
+    # ts_list = [120, 146, 350, 561, 751, 761, 796] # portal,s
+    # ts_list = [156, 259, 415, 455, 473] # spires
     #ts_list = [25, 634, 637, 645, 764] # facade
     #st_paul
     #ts_list = [283,317,321,343,348]#facade
-    #ts_list = [290,309,343,366,396]#portal,s
-    #ts_list = [285,298,328,334,394]#tower,s
-    #ts_list = [328,336,346,353,390]#window,s
+    # ts_list = [290,309,343,366,396]#portal,s
+    # ts_list = [285,298,328,334,394]#tower,s
+    # ts_list = [328,336,346,353,390]#window,s
     #notredame
     #ts_list = [934,1182,1215,1227,1751]#facade
-    #ts_list = [1171,1200,1211,1230,1285]#portal,s
-    #ts_list = [869,900,1210,1224,1227]#tower,s
-    #ts_list = [1192,1203,1211,1227,1239]#window,s
+    # ts_list = [1171,1200,1211,1230,1285]#portal,s
+    # ts_list = [869,900,1210,1224,1227]#tower,s
+    # ts_list = [1192,1203,1211,1227,1239]#window,s
     #blue_mosque
-    #ts_list = [354,384,188,190,153,24,10,4]#domes
-    #ts_list = [15,145,154,157,193]#minarets
-    #ts_list = [8,24,153,190,354,384]#portals
-    #ts_list = [4,10,24,153,190,354,384]#windows
+    ts_list = [354,384,188,190,153,24,10,4]#domes
+    # ts_list = [15,145,154,157,193]#minarets
+    # ts_list = [8,24,153,190,354,384]#portals
+    # ts_list = [4,10,24,153,190,354,384]#windows
     #badashahi
-    #ts_list = [9,11,347,356,459]#domes
-    #ts_list = [11,29,38,178,421]#minarets
-    #ts_list = [9,347,356,381,459]#portals
+    # ts_list = [9,11,347,356,459]#domes
+    # ts_list = [11,29,38,178,421]#minarets
+    # ts_list = [9,347,356,381,459]#portals
     #ts_list = [9,66,228,356,459]#windows
     
     #badashahi_new
@@ -490,36 +490,37 @@ if __name__ == "__main__":
     #blue
     #ts_list = [3,21,137,169,318,345]#domes
     #ts_list = [13,130,138,141,173]#minarets
-    #ts_list = [7,21,137,318,45]#portals
-    #ts_list = [3,21,137,318,345]#windows
+    # ts_list = [7,21,137,318,45]#portals
+    # ts_list = [3,21,137,318,345]#windows
     
     #hurba
     ts_list = [28,37,52,55,58]#domes
-    #ts_list = [26,44,45,52,101]#portals
-    #ts_list = [28,37,45,52,55]#windows
-    
+    # ts_list = [26,44,45,52,101]#portals
+    # ts_list = [28,37,45,52,55]#windows
 
-    
-    
-    
-    
+    # ts_list = []
+    # if os.path.exists('/storage/chendudai/data/gt_warps_with_manually_100/milano/windows/'):
+    #     list_dir = os.listdir('/storage/chendudai/data/gt_warps_with_manually_100/milano/windows/')
+    #     ts_list = [int(f[:4]) for f in list_dir if f.endswith('jpg')]
+    # print(ts_list)
     ###dff
     
 
     for i in tqdm(range(len(dataset))):
     #for i in ts_list:
-        ###dff        
-        if not dataset[i]:
-                continue
         ###dff
         sample = dataset[i]
-        rays = sample['rays']
-        ts = sample['ts']
+        try:
+            ts = sample['ts']
+        except:
+            continue
+        if ts[0] not in ts_list:
+            continue
         ###dff
+        rays = sample['rays']
         if args.use_semantics:
             feature_gt = sample['feature']
-        if ts[0] not in ts_list:
-                continue
+
         ###dff
 
         if (args.split == 'test_train' or args.split == 'test_test') and args.encode_a:
